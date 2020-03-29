@@ -1,5 +1,6 @@
 import argparse
 from sys import platform
+import time
 
 from models import *  # set ONNX_EXPORT in models.py
 from utils.datasets import *
@@ -59,6 +60,7 @@ def detect(save_img=False):
     if half:
         model.half()
 
+    start_time = time.time()
     # Set Dataloader
     vid_path, vid_writer = None, None
     if webcam:
@@ -74,7 +76,6 @@ def detect(save_img=False):
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
     # Run inference
-    t0 = time.time()
     for path, img, im0s, vid_cap in dataset:
         img = torch.from_numpy(img).to(device)
         img = img.half() if half else img.float()  # uint8 to fp16/32
@@ -146,7 +147,6 @@ def detect(save_img=False):
                         h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                         vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*opt.fourcc), fps, (w, h))
                     vid_writer.write(im0)
-
     if save_txt or save_img:
         print('Results saved to %s' % os.getcwd() + os.sep + out)
         if platform == 'darwin':  # MacOS

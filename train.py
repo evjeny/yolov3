@@ -275,7 +275,9 @@ def train():
             loss, loss_items = compute_loss(pred, targets, model)
             if not torch.isfinite(loss):
                 print('WARNING: non-finite loss, ending training ', loss_items)
-                return results
+                # return results
+                print("kidding, just resume")
+                continue
 
             # Scale loss by nominal batch_size of 64
             loss *= batch_size / 64
